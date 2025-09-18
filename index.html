@@ -1,0 +1,2082 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kind VPN - Secure and Fast VPN Service</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3a0ca3;
+            --accent: #f72585;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --gray: #6c757d;
+            --success: #4cc9f0;
+            --bg: #ffffff;
+            --text: #000000;
+            --card-bg: #ffffff;
+            --shadow: rgba(0, 0, 0, 0.1);
+        }
+
+        .dark-mode {
+            --bg: #121212;
+            --text: #ffffff;
+            --card-bg: #1e1e1e;
+            --shadow: rgba(255, 255, 255, 0.05);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header Styles */
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 12px var(--shadow);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo img {
+            height: 60px;
+        }
+
+        .logo h1 {
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 25px;
+            align-items: center;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: opacity 0.3s;
+        }
+
+        nav a:hover {
+            opacity: 0.8;
+        }
+
+        /* Language Switcher */
+        .language-switcher {
+            position: relative;
+        }
+
+        .language-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+        }
+
+        .language-options {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            margin-top: 10px;
+            min-width: 150px;
+            display: none;
+            z-index: 101;
+        }
+
+        .language-options.show {
+            display: block;
+        }
+
+        .language-option {
+            padding: 12px 15px;
+            color: var(--dark);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: background-color 0.3s;
+        }
+
+        .language-option:hover {
+            background-color: #f5f5f5;
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 80px 0;
+            text-align: center;
+            background: linear-gradient(rgba(67, 97, 238, 0.9), rgba(58, 12, 163, 0.9)), url('https://images.unsplash.com/photo-1569336415962-a1bd9d5e85c2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1600&q=80') center/cover;
+            color: white;
+        }
+
+        .hero h2 {
+            font-size: 2.8rem;
+            margin-bottom: 20px;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto 30px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            background-color: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        /* APK Download Section */
+        .apk-download {
+            text-align: center;
+            padding: 40px 0 20px;
+        }
+
+        .apk-download h2 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            color: var(--primary);
+        }
+
+        .apk-logo {
+            height: 120px;
+            margin-bottom: 20px;
+        }
+
+        /* Online Users Section */
+        .online-users {
+            padding: 40px 0;
+            text-align: center;
+        }
+
+        .online-users h2 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            color: var(--primary);
+        }
+
+        .online-users-container {
+            background-color: var(--card-bg);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px var(--shadow);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .users-count {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--success);
+            margin: 15px 0;
+        }
+
+        .users-list {
+            margin-top: 20px;
+            max-height: 200px;
+            overflow-y: auto;
+            text-align: left;
+        }
+
+        .user-item {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .user-item:last-child {
+            border-bottom: none;
+        }
+
+        .username {
+            font-weight: 500;
+        }
+
+        .login-time {
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+
+        /* Features Section */
+        .section-title {
+            text-align: center;
+            margin: 60px 0 40px;
+            font-size: 2.2rem;
+            color: var(--primary);
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 60px;
+        }
+
+        .feature-card {
+            background-color: var(--card-bg);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px var(--shadow);
+            text-align: center;
+            transition: transform 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .feature-icon {
+            font-size: 40px;
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+
+        .feature-card h3 {
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+        }
+
+        /* Promo Codes Section */
+        .promo-codes {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 60px;
+        }
+
+        .promo-card {
+            background-color: var(--card-bg);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px var(--shadow);
+            text-align: center;
+            transition: transform 0.3s;
+        }
+
+        .promo-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .promo-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .promo-icon {
+            font-size: 24px;
+            color: var(--primary);
+        }
+
+        .provider-logo {
+            height: 46px;
+            width: auto;
+        }
+
+        .promo-title {
+            font-size: 1.4rem;
+            color: var(--secondary);
+        }
+
+        .promo-description {
+            margin-bottom: 15px;
+            color: var(--gray);
+        }
+
+        .code-container {
+            background-color: var(--bg);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .code {
+            font-family: monospace;
+            font-size: 1.1rem;
+            color: var(--text);
+        }
+
+        .copy-btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .copy-btn:hover {
+            background-color: var(--secondary);
+        }
+
+        /* Download Section */
+        .download {
+            text-align: center;
+            padding: 60px 0;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            color: white;
+        }
+
+        .download h2 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .download p {
+            max-width: 700px;
+            margin: 0 auto 30px;
+            font-size: 1.1rem;
+        }
+
+        .download-logo {
+            height: 100px;
+            margin-bottom: 20px;
+        }
+
+        /* Gallery Section */
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 60px;
+        }
+
+        .gallery-item {
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px var(--shadow);
+            height: 350px;
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            transition: transform 0.5s;
+            background-color: #f5f5f5;
+        }
+
+        .gallery-item:hover img {
+            transform: scale(1.05);
+        }
+
+        /* Video Section */
+        .video-container {
+            max-width: 800px;
+            margin: 0 auto 60px;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px var(--shadow);
+        }
+
+        .video-container iframe {
+            width: 100%;
+            height: 450px;
+            border: none;
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--dark);
+            color: white;
+            padding: 40px 0 20px;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .footer-section h3 {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: var(--success);
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+            justify-content: center;
+        }
+
+        .social-links a {
+            color: white;
+            font-size: 1.5rem;
+            transition: color 0.3s;
+        }
+
+        .social-links a:hover {
+            color: var(--accent);
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Floating Buttons */
+        .floating-btns {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            z-index: 99;
+        }
+
+        .floating-btn {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            transition: transform 0.3s;
+            border: none;
+        }
+
+        .floating-btn:hover {
+            transform: scale(1.1);
+        }
+
+        /* Digital Clock */
+        .clock-container {
+            text-align: center;
+            margin: 30px 0;
+            padding: 20px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 15px;
+            color: white;
+            box-shadow: 0 5px 15px var(--shadow);
+        }
+
+        #digital-clock {
+            font-family: 'Courier New', monospace;
+            font-size: 2.2rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            margin-bottom: 5px;
+        }
+        
+        #digital-date {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        /* Theme Toggle */
+        .theme-toggle {
+            position: fixed;
+            top: 100px;
+            right: 30px;
+            z-index: 99;
+        }
+
+        .toggle-btn {
+            padding: 10px 15px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Tap to View Button */
+        .tap-to-view-btn {
+            display: block;
+            margin: 20px auto 0;
+            padding: 10px 20px;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            text-decoration: none;
+            font-weight: 500;
+            width: fit-content;
+        }
+
+        .tap-to-view-btn:hover {
+            background-color: var(--secondary);
+        }
+
+        /* Green Light Indicator */
+        .online-indicator {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+        }
+
+        .green-light {
+            width: 20px;
+            height: 20px;
+            background-color: #4CAF50;
+            border-radius: 50%;
+            margin-right: 10px;
+            box-shadow: 0 0 10px rgba(76, 175, 80, 0.7);
+            animation: blink 2s infinite;
+        }
+
+        @keyframes blink {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .online-text {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #4CAF50;
+        }
+
+        /* Server Status Monitor Styles */
+        .server-status {
+            padding: 40px 0;
+        }
+
+        .server-status h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: var(--primary);
+        }
+
+        .server-table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: var(--card-bg);
+            box-shadow: 0 5px 15px var(--shadow);
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .server-table th, .server-table td {
+            border: 1px solid var(--border-color);
+            padding: 16px;
+            text-align: left;
+        }
+
+        .server-table th {
+            background: linear-gradient(to bottom, var(--primary), var(--secondary));
+            color: white;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .server-table tr:nth-child(even) {
+            background-color: var(--table-row-even);
+        }
+
+        .server-table tr {
+            transition: all 0.2s ease;
+        }
+
+        .server-table tr:hover {
+            background-color: var(--table-row-hover);
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            margin-right: 10px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.7; }
+            50% { opacity: 1; }
+            100% { opacity: 0.7; }
+        }
+
+        .status-online {
+            background-color: var(--status-online);
+            box-shadow: 0 0 10px var(--status-online);
+        }
+
+        .status-offline {
+            background-color: var(--status-offline);
+            box-shadow: 0 0 10px var(--status-offline);
+        }
+
+        .status-busy {
+            background-color: var(--status-busy);
+            box-shadow: 0 0 10px var(--status-busy);
+            animation: pulse-fast 1s infinite;
+        }
+
+        .status-full {
+            background-color: var(--status-full);
+            box-shadow: 0 0 10px var(--status-full);
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse-fast {
+            0% { opacity: 0.5; }
+            50% { opacity: 1; }
+            100% { opacity: 0.5; }
+        }
+
+        .online-count {
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
+        .count-normal {
+            color: var(--status-online);
+        }
+
+        .count-busy {
+            color: var(--status-busy);
+        }
+
+        .count-full {
+            color: var(--status-full);
+        }
+
+        .ping-time {
+            font-size: 0.95em;
+            font-weight: bold;
+            padding: 6px 12px;
+            border-radius: 20px;
+            display: inline-block;
+        }
+
+        .ping-good {
+            background-color: #e8f6ef;
+            color: #2ecc71;
+        }
+
+        .ping-medium {
+            background-color: #fef9e7;
+            color: #f1c40f;
+        }
+
+        .ping-bad {
+            background-color: #fbebee;
+            color: #e74c3c;
+        }
+
+        .total-users {
+            text-align: center;
+            margin-top: 30px;
+            font-weight: bold;
+            font-size: 1.3em;
+            padding: 20px;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            color: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px var(--shadow);
+        }
+
+        .server-name {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 600;
+        }
+
+        .error-message {
+            color: #e74c3c;
+            font-style: italic;
+        }
+
+        .flag {
+            width: 28px;
+            height: 20px;
+            border: 1px solid #ddd;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+            border-radius: 2px;
+            object-fit: cover;
+        }
+
+        .refresh-info {
+            text-align: center;
+            margin: 15px 0;
+            color: var(--gray);
+            font-size: 0.9em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .last-updated {
+            text-align: right;
+            color: var(--gray);
+            font-size: 0.85em;
+            margin-top: 10px;
+        }
+
+        .retry-btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-left: 10px;
+            font-size: 0.8em;
+        }
+
+        .retry-btn:hover {
+            background-color: var(--secondary);
+        }
+
+        .server-limit-info {
+            text-align: center;
+            margin: 10px 0;
+            padding: 10px;
+            background: linear-gradient(to right, var(--bg-primary), var(--bg-secondary));
+            border-radius: 8px;
+            font-size: 0.9em;
+            color: var(--gray);
+            border: 1px solid var(--border-color);
+        }
+
+        /* Progress Bar Styles */
+        .progress-container {
+            width: 100%;
+            margin-top: 8px;
+        }
+
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            font-size: 0.95em;
+        }
+
+        .progress-text {
+            font-weight: 600;
+        }
+
+        .progress-percentage {
+            font-weight: bold;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background-color: #e0e0e0;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .dark-mode .progress-bar {
+            background-color: #444;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 5px;
+            transition: width 0.5s ease;
+        }
+
+        .progress-low {
+            background: linear-gradient(to right, #2ecc71, #27ae60);
+        }
+
+        .progress-medium {
+            background: linear-gradient(to right, #f1c40f, #f39c12);
+        }
+
+        .progress-high {
+            background: linear-gradient(to right, #e74c3c, #c0392b);
+        }
+
+        .progress-full {
+            background: linear-gradient(to right, #9b59b6, #8e44ad);
+        }
+
+        /* User count styling */
+        .user-count-low {
+            color: var(--user-count-low);
+            font-weight: bold;
+        }
+
+        .user-count-high {
+            color: var(--user-count-high);
+            font-weight: bold;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            nav ul {
+                gap: 15px;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .hero h2 {
+                font-size: 2.2rem;
+            }
+            
+            .features, .promo-codes, .gallery {
+                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            }
+            
+            .server-table {
+                font-size: 0.9rem;
+            }
+            
+            .server-table th, .server-table td {
+                padding: 12px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero h2 {
+                font-size: 2rem;
+            }
+            
+            .floating-btns {
+                bottom: 20px;
+                right: 20px;
+            }
+            
+            .floating-btn {
+                width: 50px;
+                height: 50px;
+                font-size: 1.2rem;
+            }
+            
+            .theme-toggle {
+                position: fixed;
+                bottom: 20px;
+                left: 20px;
+                top: auto;
+                right: auto;
+                z-index: 99;
+            }
+            
+            .toggle-btn {
+                padding: 8px 12px;
+                font-size: 0.9rem;
+            }
+            
+            #digital-clock {
+                font-size: 1.8rem;
+            }
+            
+            #digital-date {
+                font-size: 1rem;
+            }
+
+            .provider-logo {
+                height: 38px;
+            }
+            
+            .apk-logo {
+                height: 100px;
+            }
+            
+            .logo img {
+                height: 50px;
+            }
+            
+            .download-logo {
+                height: 80px;
+            }
+            
+            .gallery-item {
+                height: 280px;
+            }
+            
+            .language-switcher {
+                margin-top: 10px;
+            }
+            
+            .users-count {
+                font-size: 2rem;
+            }
+            
+            .server-table {
+                display: block;
+                overflow-x: auto;
+            }
+            
+            .server-name {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 5px;
+            }
+            
+            .progress-info {
+                flex-direction: column;
+                gap: 3px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero h2 {
+                font-size: 1.8rem;
+            }
+            
+            .hero p {
+                font-size: 1rem;
+            }
+            
+            .btn {
+                padding: 10px 20px;
+                font-size: 0.9rem;
+            }
+            
+            .section-title {
+                font-size: 1.8rem;
+            }
+            
+            .feature-card, .promo-card {
+                padding: 20px;
+            }
+            
+            .video-container iframe {
+                height: 250px;
+            }
+            
+            .footer-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .floating-btns {
+                bottom: 15px;
+                right: 15px;
+            }
+            
+            .floating-btn {
+                width: 45px;
+                height: 45px;
+                font-size: 1rem;
+            }
+            
+            .theme-toggle {
+                bottom: 15px;
+                left: 15px;
+            }
+            
+            .server-table th, .server-table td {
+                padding: 10px;
+                font-size: 0.85em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container header-content">
+            <div class="logo">
+                <img src="https://raw.githubusercontent.com/THANDARLIN2015/Kind-VPN-/main/image/kind.png" alt="Kind VPN Logo">
+                <h1 data-translate="site-title">Kind VPN</h1>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#features" data-translate="nav-features">Features</a></li>
+                    <li><a href="#promo-codes" data-translate="nav-promo">Promo Codes</a></li>
+                    <li><a href="#download" data-translate="nav-download">Download</a></li>
+                    <li><a href="#gallery" data-translate="nav-gallery">Gallery</a></li>
+                    <li><a href="#tutorial" data-translate="nav-tutorial">Tutorial</a></li>
+                    <li class="language-switcher">
+                        <button class="language-btn">
+                            <i class="fas fa-globe"></i> <span data-translate="language">Language</span> <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="language-options">
+                            <a href="#" class="language-option" data-lang="en">
+                                <span>English</span>
+                            </a>
+                            <a href="#" class="language-option" data-lang="my">
+                                <span>မြန်မာ</span>
+                            </a>
+                            <a href="#" class="language-option" data-lang="th">
+                                <span>ไทย</span>
+                            </a>
+                        </div>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h2 data-translate="hero-title">Secure Your Internet with Kind VPN</h2>
+            <p data-translate="hero-text">Experience the fastest and most reliable VPN service with military-grade encryption and unlimited bandwidth.</p>
+            <a href="#download" class="btn" data-translate="hero-button">Get Started Now</a>
+        </div>
+    </section>
+
+    <!-- APK Download Section -->
+    <section class="apk-download">
+        <div class="container">
+            <img src="https://raw.githubusercontent.com/THANDARLIN2015/Kind-VPN-/main/image/kind.png" alt="Kind VPN" class="apk-logo">
+            <h2 data-translate="apk-title">Download Our App Now</h2>
+            <a href="https://play.google.com/store/apps/details?id=com.kindvpn.net" class="btn" target="_blank">
+                <i class="fab fa-google-play"></i> <span data-translate="apk-button">Download APK</span>
+            </a>
+        </div>
+    </section>
+
+    <!-- Digital Clock -->
+    <div class="container">
+        <div class="clock-container">
+            <div id="digital-clock">00:00:00</div>
+            <div id="digital-date">Loading date...</div>
+        </div>
+    </div>
+
+    <!-- Online Users Section -->
+    <section class="online-users">
+        <div class="container">
+            <h2 class="section-title" data-translate="online-users-title">Current Online Users</h2>
+            <div class="online-users-container">
+                <div id="online-users-loader" style="text-align: center; padding: 20px;">
+                    <i class="fas fa-spinner fa-spin" style="font-size: 2rem; color: var(--primary);"></i>
+                    <p>Loading online users...</p>
+                </div>
+                <div id="online-users-content" style="display: none;">
+                    <div class="users-count">
+                        <span id="online-users-count">0</span> Users Online
+                    </div>
+                    <div class="users-list" id="online-users-list">
+                        <!-- User list will be populated here -->
+                    </div>
+                    <!-- Tap to View Button -->
+                    <a href="http://status.kindvpn.site:81/online-user.php" target="_blank" class="tap-to-view-btn" data-translate="tap-to-view">
+                        Tap to View Full Details
+                    </a>
+                </div>
+                <div id="online-users-error" style="display: none; text-align: center;">
+                    <div class="online-indicator">
+                        <div class="green-light"></div>
+                        <div class="online-text">Online Users</div>
+                    </div>
+                    <!-- Tap to View Button in error state too -->
+                    <a href="http://status.kindvpn.site:81/online-user.php" target="_blank" class="tap-to-view-btn" data-translate="tap-to-view">
+                        Tap to View Full Details
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Server Status Monitor Section -->
+    <section class="server-status">
+        <div class="container">
+            <h2 class="section-title">🌐 Servers List: Online Users</h2>
+            <div class="refresh-info">🖥️ လူသုံးနည်းတဲ့ဆာဗာတွေရွေးချယ်ပြီးသုံးပါ</div>
+            <div class="server-limit-info">📊 Each server has a limit of 250 users. Servers at capacity will show as <span style="color: var(--status-full); font-weight: bold;">FULL</span>.</div>
+            
+            <table class="server-table" id="serverTable">
+                <tr>
+                    <th>Server Status</th>
+                    <th>Server Name</th>
+                    <th>Online Users</th>
+                    <th>Ping</th>
+                </tr>
+                <tr>
+                    <td colspan="4" style="text-align: center;">Loading server data...</td>
+                </tr>
+            </table>
+            
+            <div class="total-users">Total Online Active: <span class="online-count" id="totalOnlineCount">0</span> Users</div>
+            <div class="last-updated" id="lastUpdated">Last updated: </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features">
+        <div class="container">
+            <h2 class="section-title" data-translate="features-title">Why Choose Kind VPN?</h2>
+            <div class="features">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3 data-translate="feature1-title">Military-Grade Security</h3>
+                    <p data-translate="feature1-text">Our VPN uses AES-256 encryption to keep your data safe from hackers and surveillance.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <h3 data-translate="feature2-title">Lightning Fast Speed</h3>
+                    <p data-translate="feature2-text">With servers in 50+ countries, enjoy buffer-free streaming and lag-free gaming.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-globe"></i>
+                    </div>
+                    <h3 data-translate="feature3-title">Global Access</h3>
+                    <p data-translate="feature3-text">Access content from around the world without restrictions or censorship.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Promo Codes Section -->
+    <section id="promo-codes">
+        <div class="container">
+            <h2 class="section-title" data-translate="promo-title">Redeem Your Codes</h2>
+            <div class="promo-codes">
+                <div class="promo-card">
+                    <div class="promo-header">
+                        <div class="promo-icon">
+                            <img src="https://raw.githubusercontent.com/yawlawt/YTPlusVip/main/images/d.png" alt="DTAC Logo" class="provider-logo">
+                        </div>
+                        <h3 class="promo-title">DTAC JAIDEE</h3>
+                    </div>
+                    <p class="promo-description">30 THB</p>
+                    <div class="code-container">
+                        <span class="code">*117*30#</span>
+                        <button class="copy-btn" onclick="copyCode('*117*30#')" data-translate="copy-button">Copy</button>
+                    </div>
+                </div>
+                
+                <div class="promo-card">
+                    <div class="promo-header">
+                        <div class="promo-icon">
+                            <img src="https://raw.githubusercontent.com/yawlawt/YTPlusVip/main/images/d.png" alt="DTAC Logo" class="provider-logo">
+                        </div>
+                        <h3 class="promo-title">DTAC GAME PLAN</h3>
+                    </div>
+                    <p class="promo-description">DTAC APK - Use in-app purchase</p>
+                    <div class="code-container">
+                        <span class="code">In-app purchase</span>
+                        <button class="copy-btn" onclick="alert('Use in-app purchase in DTAC APK')" data-translate="info-button">Info</button>
+                    </div>
+                </div>
+                
+                <div class="promo-card">
+                    <div class="promo-header">
+                        <div class="promo-icon">
+                            <img src="https://raw.githubusercontent.com/yawlawt/YTPlusVip/main/images/t.png" alt="TRUE Logo" class="provider-logo">
+                        </div>
+                        <h3 class="promo-title">TRUE VDO</h3>
+                    </div>
+                    <p class="promo-description">54 THB</p>
+                    <div class="code-container">
+                        <span class="code">*900*1347#</span>
+                        <button class="copy-btn" onclick="copyCode('*900*1347#')" data-translate="copy-button">Copy</button>
+                    </div>
+                </div>
+                
+                <div class="promo-card">
+                    <div class="promo-header">
+                        <div class="promo-icon">
+                            <img src="https://raw.githubusercontent.com/yawlawt/YTPlusVip/main/images/t.png" alt="TRUE Logo" class="provider-logo">
+                        </div>
+                        <h3 class="promo-title">TRUE JAIDEE</h3>
+                    </div>
+                    <p class="promo-description">30 THB</p>
+                    <div class="code-container">
+                        <span class="code">*117*30#</span>
+                        <button class="copy-btn" onclick="copyCode('*117*30#')" data-translate="copy-button">Copy</button>
+                    </div>
+                </div>
+                
+                <div class="promo-card">
+                    <div class="promo-header">
+                        <div class="promo-icon">
+                            <img src="https://raw.githubusercontent.com/yawlawt/YTPlusVip/main/images/t.png" alt="TRUE Logo" class="provider-logo">
+                        </div>
+                        <h3 class="promo-title">TRUE VIBER</h3>
+                    </div>
+                    <p class="promo-description">53 THB</p>
+                    <div class="code-container">
+                        <span class="code">*900*3809#</span>
+                        <button class="copy-btn" onclick="copyCode('*900*3809#')" data-translate="copy-button">Copy</button>
+                    </div>
+                </div>
+                
+                <div class="promo-card">
+                    <div class="promo-header">
+                        <div class="promo-icon">
+                            <img src="https://raw.githubusercontent.com/yawlawt/YTPlusVip/main/images/a.png" alt="AIS Logo" class="provider-logo">
+                        </div>
+                        <h3 class="promo-title">AIS 64 KBPS</h3>
+                    </div>
+                    <p class="promo-description">32 THB</p>
+                    <div class="code-container">
+                        <span class="code">*777*7067#</span>
+                        <button class="copy-btn" onclick="copyCode('*777*7067#')" data-translate="copy-button">Copy</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Download Section -->
+    <section id="download">
+        <div class="download">
+            <div class="container">
+                <img src="https://raw.githubusercontent.com/THANDARLIN2015/Kind-VPN-/main/image/kind.png" alt="Kind VPN" class="download-logo">
+                <h2 data-translate="download-title">Download Kind VPN Now</h2>
+                <p data-translate="download-text">Get started with our easy-to-use app for all your devices. Available on Android, iOS, Windows, and Mac.</p>
+                <a href="https://play.google.com/store/apps/details?id=com.kindvpn.net" class="btn" target="_blank"><i class="fab fa-android"></i> <span data-translate="download-button">Download APK</span></a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Gallery Section -->
+    <section id="gallery">
+        <div class="container">
+            <h2 class="section-title" data-translate="gallery-title">Kind VPN in Action</h2>
+            <div class="gallery">
+                <div class="gallery-item">
+                    <img src="https://raw.githubusercontent.com/THANDARLIN2015/Kind-VPN-/main/image/k1.png" alt="Kind VPN App Interface">
+                </div>
+                <div class="gallery-item">
+                    <img src="https://raw.githubusercontent.com/THANDARLIN2015/Kind-VPN-/main/image/k2.png" alt="Kind VPN Features">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Video Section -->
+    <section id="tutorial">
+        <div class="container">
+            <h2 class="section-title" data-translate="tutorial-title">How to Use Kind VPN</h2>
+            <div class="video-container">
+                <iframe src="https://www.youtube.com/embed/Gp828RT70iM?autoplay=1&mute=1" title="Kind VPN Tutorial" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3 data-translate="footer-about">About Kind VPN</h3>
+                    <p data-translate="footer-about-text">Secure your internet connection and browse anonymously with our fast and reliable VPN service.</p>
+                </div>
+                <div class="footer-section">
+                    <h3 data-translate="footer-connect">Connect With Us</h3>
+                    <p data-translate="footer-connect-text">Follow us on social media for updates and offers.</p>
+                    <div class="social-links">
+                        <a href="https://t.me/kindvpn2025" target="_blank"><i class="fab fa-telegram"></i></a>
+                        <a href="https://www.facebook.com/Juevpn" target="_blank"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h3 data-translate="footer-contact">Contact Us</h3>
+                    <p>Email: kindvpn2025@gmail.com</p>
+                    <p>Telegram: @kindvpn2025</p>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2023 Kind VPN. <span data-translate="footer-rights">All rights reserved.</span></p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Floating Buttons -->
+    <div class="floating-btns">
+        <button class="floating-btn" onclick="scrollToTop()">
+            <i class="fas fa-arrow-up"></i>
+        </button>
+        <button class="floating-btn" onclick="window.location.href='#download'">
+            <i class="fas fa-download"></i>
+        </button>
+        <button class="floating-btn" onclick="window.open('https://t.me/kindvpn2025', '_blank')">
+            <i class="fab fa-telegram"></i>
+        </button>
+        <button class="floating-btn" onclick="window.open('https://www.facebook.com/Juevpn', '_blank')">
+            <i class="fab fa-facebook"></i>
+        </button>
+    </div>
+
+    <!-- Theme Toggle -->
+    <div class="theme-toggle">
+        <button class="toggle-btn" id="theme-toggle">
+            <i class="fas fa-moon"></i> <span data-translate="dark-mode">Dark Mode</span>
+        </button>
+    </div>
+
+    <script>
+        // Digital Clock with Date
+        function updateClock() {
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            
+            // Format date
+            const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+            const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+            
+            const day = days[now.getDay()];
+            const date = now.getDate();
+            const month = months[now.getMonth()];
+            const year = now.getFullYear();
+            
+            document.getElementById('digital-clock').textContent = `${hours}:${minutes}:${seconds}`;
+            document.getElementById('digital-date').textContent = `${day}, ${month} ${date}, ${year}`;
+        }
+        
+        setInterval(updateClock, 1000);
+        updateClock();
+        
+        // Copy Code Function
+        function copyCode(code) {
+            navigator.clipboard.writeText(code).then(() => {
+                alert(`Copied: ${code}`);
+            });
+        }
+        
+        // Scroll to Top Function
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        
+        // Dark/Light Mode Toggle
+        const themeToggle = document.getElementById('theme-toggle');
+        const icon = themeToggle.querySelector('i');
+        
+        themeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+            
+            if (document.body.classList.contains('dark-mode')) {
+                icon.className = 'fas fa-sun';
+                themeToggle.innerHTML = '<i class="fas fa-sun"></i> <span data-translate="light-mode">Light Mode</span>';
+                translateContent(currentLang); // Update translation for light mode text
+            } else {
+                icon.className = 'fas fa-moon';
+                themeToggle.innerHTML = '<i class="fas fa-moon"></i> <span data-translate="dark-mode">Dark Mode</span>';
+                translateContent(currentLang); // Update translation for dark mode text
+            }
+        });
+        
+        // 7-Day Color Changing Theme
+        const colorsByDay = [
+            ['#4361ee', '#3a0ca3'], // Sunday - Blue
+            ['#7209b7', '#480ca8'], // Monday - Purple
+            ['#f72585', '#b5179e'], // Tuesday - Pink
+            ['#4cc9f0', '#4895ef'], // Wednesday - Light Blue
+            ['#560bad', '#4361ee'], // Thursday - Deep Blue
+            ['#f3722c', '#f8961e'], // Friday - Orange
+            ['#06d6a0', '#0db39e']  // Saturday - Green
+        ];
+        
+        function updateColorsByDay() {
+            const dayOfWeek = new Date().getDay(); // 0 = Sunday, 1 = Monday, etc.
+            const [primary, secondary] = colorsByDay[dayOfWeek];
+            
+            document.documentElement.style.setProperty('--primary', primary);
+            document.documentElement.style.setProperty('--secondary', secondary);
+            document.documentElement.style.setProperty('--accent', colorsByDay[(dayOfWeek + 2) % 7][0]);
+        }
+        
+        updateColorsByDay();
+        
+        // Language Switcher
+        const languageBtn = document.querySelector('.language-btn');
+        const languageOptions = document.querySelector('.language-options');
+        let currentLang = 'en';
+        
+        languageBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            languageOptions.classList.toggle('show');
+        });
+        
+        // Close language options when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.language-switcher')) {
+                languageOptions.classList.remove('show');
+            }
+        });
+        
+        // Language translations
+        const translations = {
+            'en': {
+                'site-title': 'Kind VPN',
+                'language': 'Language',
+                'nav-features': 'Features',
+                'nav-promo': 'Promo Codes',
+                'nav-download': 'Download',
+                'nav-gallery': 'Gallery',
+                'nav-tutorial': 'Tutorial',
+                'hero-title': 'Secure Your Internet with Kind VPN',
+                'hero-text': 'Experience the fastest and most reliable VPN service with military-grade encryption and unlimited bandwidth.',
+                'hero-button': 'Get Started Now',
+                'apk-title': 'Download Our App Now',
+                'apk-button': 'Download APK',
+                'online-users-title': 'Current Online Users',
+                'tap-to-view': 'Tap to View Full Details',
+                'features-title': 'Why Choose Kind VPN?',
+                'feature1-title': 'Military-Grade Security',
+                'feature1-text': 'Our VPN uses AES-256 encryption to keep your data safe from hackers and surveillance.',
+                'feature2-title': 'Lightning Fast Speed',
+                'feature2-text': 'With servers in 50+ countries, enjoy buffer-free streaming and lag-free gaming.',
+                'feature3-title': 'Global Access',
+                'feature3-text': 'Access content from around the world without restrictions or censorship.',
+                'promo-title': 'Redeem Your Codes',
+                'copy-button': 'Copy',
+                'info-button': 'Info',
+                'download-title': 'Download Kind VPN Now',
+                'download-text': 'Get started with our easy-to-use app for all your devices. Available on Android, iOS, Windows, and Mac.',
+                'download-button': 'Download APK',
+                'gallery-title': 'Kind VPN in Action',
+                'tutorial-title': 'How to Use Kind VPN',
+                'footer-about': 'About Kind VPN',
+                'footer-about-text': 'Secure your internet connection and browse anonymously with our fast and reliable VPN service.',
+                'footer-connect': 'Connect With Us',
+                'footer-connect-text': 'Follow us on social media for updates and offers.',
+                'footer-contact': 'Contact Us',
+                'footer-rights': 'All rights reserved.',
+                'dark-mode': 'Dark Mode',
+                'light-mode': 'Light Mode'
+            },
+            'my': {
+                'site-title': 'Kind VPN',
+                'language': 'ဘာသာစကား',
+                'nav-features': 'အင်္ဂါရပ်များ',
+                'nav-promo': 'ပရိုမိုကုဒ်များ',
+                'nav-download': 'ဒေါင်းလုဒ်',
+                'nav-gallery': 'ပြခန်း',
+                'nav-tutorial': 'သင်ခန်းစာ',
+                'hero-title': 'Kind VPN ဖြင့် သင့်အင်တာနက်ကို လုံခြုံစေပါ',
+                'hero-text': 'စစ်တပ်အဆင့် လျှို့ဝှက်စနစ်နှင့် ကန့်သတ်မှုမရှိ အရန်နေရာဖြင့် အမြန်ဆုံးနှင့် စိတ်ချရဆုံး VPN ဝန်ဆောင်မှုကို ခံစားပါ။',
+                'hero-button': 'ယခုစတင်ပါ',
+                'apk-title': 'ကျွန်ုပ်တို့၏ App ကို ယခုပဲ ဒေါင်းလုဒ်လုပ်ပါ',
+                'apk-button': 'APK ဒေါင်းလုဒ်',
+                'online-users-title': 'လက်ရှိ အသုံးပြုနေသူများ',
+                'tap-to-view': 'အပြည့်အစုံကြည့်ရန် နှိပ်ပါ',
+                'features-title': 'ဘာကြောင့် Kind VPN ကို ရွေးချယ်သင့်သလဲ?',
+                'feature1-title': 'စစ်တပ်အဆင့် လုံခြုံရေး',
+                'feature1-text': 'ကျွန်ုပ်တို့၏ VPN သည် AES-256 �လျှို့ဝှက်�စနစ်ကို အသုံးပြုကာ သင့်ဒေတာကို ဟက်ကာများနှင့် စောင့်ကြည့်မှုမှ ကာကွယ်ပေးသည်။',
+                'feature2-title': 'မြန်ဆန်သောအရှိန်',
+                'feature2-text': 'နိုင်ငံ ၅၀+ ရှိ ဆာဗာများဖြင့် ကြားခံမရှိ စီးဆင်းမှုနှင့် နှောင့်နှေးမှု�မရှိ ဂိမ်းကစားမှုကို ခံစားပါ။',
+                'feature3-title': 'ကမ္ဘာလုံးဆိုင်ရာ ဝင်ရောက်မှု',
+                'feature3-text': 'ကန့်သတ်မှုများမရှိဘဲ ကမ္ဘာတစ်ဝှမ်းရှိ အင်တာနက်ကွန်ရက်များကို ဝင်ရောက်ကြည့်ရှုပါ။',
+                'promo-title': 'သင့်ကုဒ်များကို ဖြေလျှော့ပါ',
+                'copy-button': 'ကော်ပီ',
+                'info-button': 'အချက်အလက်',
+                'download-title': 'Kind VPN ကို ယခုပဲ ဒေါင်းလုဒ်လုပ်ပါ',
+                'download-text': 'သင့်စက်ပစ္စည်းအားလုံးအတွက် ကျွန်ုပ်တို့၏ အသုံးပြုရလွယ်ကူသော app ဖြင့် စတင်ပါ။ Android, iOS, Windows နှင့် Mac တို့တွင် ရရှိပါသည်။',
+                'download-button': 'APK ဒေါင်း�လုဒ်',
+                'gallery-title': 'Kind VPN လုပ်ဆောင်ချက်',
+                'tutorial-title': 'Kind VPN ကို အသုံးပြုနည်း',
+                'footer-about': 'Kind VPN အကြောင်း',
+                'footer-about-text': 'ကျွန်ုပ်တို့၏ မြန်ဆန်ပြီး စိတ်ချရသော VPN ဝန်ဆောင်မှုဖြင့် သင့်အင်တာနက်ချိတ်ဆက်မှုကို လုံခြုံစေကာ အမည်ဝှက်စွာ ကြည့်ရှုပါ။',
+                'footer-connect': 'ကျွန်ုပ်တို့နှင့် ချိတ်ဆက်ပါ',
+                'footer-connect-text': 'နောက်ဆုံးရသတင်းများနှင့် ကမ်းလှမ်းချက်များအတွက် လူမှုမီဒီယာတွင် ကျွန်ုပ်တို့ကို လိုက်နာပါ။',
+                'footer-contact': 'ဆက်သွယ်ရန်',
+                'footer-rights': 'အခွင့်အရေးအားလုံးကို လက်ဝယ်ထားရှိသည်။',
+                'dark-mode': 'အနက်ရောင်',
+                'light-mode': 'အဖြူရောင်'
+            },
+            'th': {
+                'site-title': 'Kind VPN',
+                'language': 'ภาษา',
+                'nav-features': 'คุณสมบัติ',
+                'nav-promo': 'รหัสโปรโมชั่น',
+                'nav-download': 'ดาวน์โหลด',
+                'nav-gallery': 'แกลเลอรี่',
+                'nav-tutorial': 'การสอน',
+                'hero-title': 'รักษาความปลอดภัยอินเทอร์เน็ตของคุณด้วย Kind VPN',
+                'hero-text': 'สัมผัสประสบการณ์บริการ VPN ที่เร็วและน่าเชื่อถือที่สุดด้วยการเข้ารหัสระดับ military และแบนด์วิดธ์ไม่จำกัด',
+                'hero-button': 'เริ่มต้นตอนนี้',
+                'apk-title': 'ดาวน์โหลดแอปของเราตอนนี้',
+                'apk-button': 'ดาวน์โหลด APK',
+                'online-users-title': 'ผู้ใช้ออนไลน์ปัจจุบัน',
+                'tap-to-view': 'แตะเพื่อดูรายละเอียดเต็ม',
+                'features-title': 'ทำไมต้องเลือก Kind VPN?',
+                'feature1-title': 'ความปลอดภัยระดับ military',
+                'feature1-text': 'VPN ของเราใช้การเข้ารหัส AES-256 เพื่อปกป้องข้อมูลของคุณจากแฮ็กเกอร์และการสอดส่อง',
+                'feature2-title': 'ความเร็วสายฟ้า',
+                'feature2-text': 'ด้วยเซิร์ฟเวอร์ใน 50+ ประเทศ เพลิดเพลินกับการสตรีมแบบไม่มีบัฟเฟอร์และการเล่นเกมแบบไม่มีแล็ก',
+                'feature3-title': 'การเข้าถึงทั่วโลก',
+                'feature3-text': 'เข้าถึงเนื้อหาจากทั่วโลกโดยไม่มีข้อจำกัดหรือการเซ็นเซอร์',
+                'promo-title': 'แลกโค้ดของคุณ',
+                'copy-button': 'คัดลอก',
+                'info-button': 'ข้อมูล',
+                'download-title': 'ดาวน์โหลด Kind VPN ตอนนี้',
+                'download-text': 'เริ่มต้นด้วยแอปที่ใช้งานง่ายของเราสำหรับอุปกรณ์ทั้งหมดของคุณ มีให้บริการบน Android, iOS, Windows และ Mac',
+                'download-button': 'ดาวน์โหลด APK',
+                'gallery-title': 'Kind VPN ใน acción',
+                'tutorial-title': 'วิธีใช้ Kind VPN',
+                'footer-about': 'เกี่ยวกับ Kind VPN',
+                'footer-about-text': 'รักษาความปลอดภัยการเชื่อมต่ออินเทอร์เน็ตของคุณและเรียกดูแบบไม่ระบุชื่อด้วยบริการ VPN ที่เร็วและน่าเชื่อถือของเรา',
+                'footer-connect': 'ติดต่อเรา',
+                'footer-connect-text': 'ติดตามเราบนโซเชียลมีเดียสำหรับอัปเดตและข้อเสนอ',
+                'footer-contact': 'ติดต่อเรา',
+                'footer-rights': 'สงวนลิขสิทธิ์',
+                'dark-mode': 'โหมดกลางคืน',
+                'light-mode': 'โหมดกลางวัน'
+            }
+        };
+        
+        // Function to translate content
+        function translateContent(lang) {
+            document.querySelectorAll('[data-translate]').forEach(element => {
+                const key = element.getAttribute('data-translate');
+                if (translations[lang] && translations[lang][key]) {
+                    element.textContent = translations[lang][key];
+                }
+            });
+            
+            // Update language button text
+            const languageText = document.querySelector('.language-btn span');
+            if (translations[lang] && translations[lang]['language']) {
+                languageText.textContent = translations[lang]['language'];
+            }
+        }
+        
+        // Set up language option clicks
+        document.querySelectorAll('.language-option').forEach(option => {
+            option.addEventListener('click', (e) => {
+                e.preventDefault();
+                const lang = option.getAttribute('data-lang');
+                currentLang = lang;
+                translateContent(lang);
+                languageOptions.classList.remove('show');
+            });
+        });
+
+        // Server list with names and URLs for online users
+        const onlineUsersServers = [
+            { name: 'th-01', url: 'http://45.136.255.72:81/server/online' },
+            { name: 'th-02', url: 'http://212.80.215.220:81/server/online' },
+            { name: 'th-03', url: 'http://45.136.255.108:81/server/online' },
+            { name: 'th-04', url: 'http://43.229.150.11:8888/server/online' },
+            { name: 'th-05', url: 'http://45.136.255.108:81/server/online' }
+        ];
+
+        // List of CORS proxies to try (fallback options)
+        const corsProxies = [
+            url => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
+            url => `https://corsproxy.io/?${encodeURIComponent(url)}`,
+            url => `https://corsproxy.org/?${encodeURIComponent(url)}`,
+            url => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`,
+            url => `https://cors-anywhere.herokuapp.com/${url}`
+        ];
+
+        // Fetch Online Users Data from all servers
+        function fetchOnlineUsers() {
+            const loader = document.getElementById('online-users-loader');
+            const content = document.getElementById('online-users-content');
+            const error = document.getElementById('online-users-error');
+            
+            let totalOnline = 0;
+            let allOnlineUsers = [];
+            let completedRequests = 0;
+            
+            // Function to fetch from a single server with CORS fallback
+            function fetchServerData(server) {
+                return new Promise((resolve, reject) => {
+                    const attempts = [
+                        () => fetch(server.url), // direct fetch
+                        ...corsProxies.map(proxy => () => fetch(proxy(server.url)))
+                    ];
+                    
+                    let currentAttempt = 0;
+                    
+                    function tryAttempt() {
+                        if (currentAttempt >= attempts.length) {
+                            reject(new Error('All attempts failed'));
+                            return;
+                        }
+                        
+                        attempts[currentAttempt]()
+                            .then(response => {
+                                if (response.ok) {
+                                    return response.json();
+                                } else {
+                                    throw new Error('Network response was not ok');
+                                }
+                            })
+                            .then(data => {
+                                resolve({ server: server.name, data });
+                            })
+                            .catch(err => {
+                                currentAttempt++;
+                                tryAttempt();
+                            });
+                    }
+                    
+                    tryAttempt();
+                });
+            }
+            
+            // Fetch data from all servers
+            onlineUsersServers.forEach(server => {
+                fetchServerData(server)
+                    .then(result => {
+                        totalOnline += result.data.total_online || 0;
+                        if (result.data.online_users && Array.isArray(result.data.online_users)) {
+                            allOnlineUsers = allOnlineUsers.concat(result.data.online_users);
+                        }
+                    })
+                    .catch(err => {
+                        console.error(`Error fetching from ${server.name}:`, err);
+                    })
+                    .finally(() => {
+                        completedRequests++;
+                        
+                        // When all requests are completed
+                        if (completedRequests >= onlineUsersServers.length) {
+                            // Hide loader and error, show content
+                            loader.style.display = 'none';
+                            error.style.display = 'none';
+                            content.style.display = 'block';
+                            
+                            // Update user count
+                            const countElement = document.getElementById('online-users-count');
+                            countElement.textContent = totalOnline;
+                            
+                            // Update user list
+                            const userList = document.getElementById('online-users-list');
+                            userList.innerHTML = '';
+                            
+                            if (allOnlineUsers.length > 0) {
+                                allOnlineUsers.slice(0, 10).forEach(user => {
+                                    const userItem = document.createElement('div');
+                                    userItem.className = 'user-item';
+                                    
+                                    const username = document.createElement('div');
+                                    username.className = 'username';
+                                    username.textContent = user.username || 'Unknown User';
+                                    
+                                    const loginTime = document.createElement('div');
+                                    loginTime.className = 'login-time';
+                                    loginTime.textContent = user.login_time || '';
+                                    
+                                    userItem.appendChild(username);
+                                    userItem.appendChild(loginTime);
+                                    userList.appendChild(userItem);
+                                });
+                            } else {
+                                userList.innerHTML = '<div class="user-item">No users online at the moment</div>';
+                            }
+                        }
+                    });
+            });
+            
+            // If no servers respond, show error after timeout
+            setTimeout(() => {
+                if (completedRequests < onlineUsersServers.length) {
+                    loader.style.display = 'none';
+                    content.style.display = 'none';
+                    error.style.display = 'block';
+                }
+            }, 10000);
+        }
+
+        // Server list for status monitor
+        const statusServers = [
+            { id: 'th-01', name: 'TH-01', url: 'http://45.136.255.72:81/server/online' },
+            { id: 'th-02', name: 'TH-02', url: 'http://212.80.215.220:81/server/online' },
+            { id: 'th-03', name: 'TH-03', url: 'http://45.136.255.108:81/server/online' },
+            { id: 'th-04', name: 'TH-04', url: 'http://43.229.150.11:8888/server/online' },
+        ];
+
+        // Server user limit
+        const SERVER_USER_LIMIT = 250;
+
+        // Function to get country code from server name
+        function getCountryCode(serverName) {
+            const parts = serverName.split('-');
+            return parts[0] || '';
+        }
+        
+        // Function to get flag image based on country code
+        function getFlagImage(countryCode) {
+            const code = countryCode.toLowerCase();
+            // Using a different flag API that's more reliable
+            const flagPath = `https://flagcdn.com/w40/${code}.png`;
+            return `<img src="${flagPath}" alt="${code} flag" class="flag" onerror="this.style.display='none'">`;
+        }
+        
+        // Function to determine ping class
+        function getPingClass(pingTime) {
+            if (pingTime <= 100) return 'ping-good';
+            if (pingTime <= 300) return 'ping-medium';
+            return 'ping-bad';
+        }
+
+        // Function to determine status based on user count
+        function getServerStatus(onlineCount) {
+            if (onlineCount === 0) {
+                return { status: 'Offline', class: 'status-offline' };
+            } else if (onlineCount < SERVER_USER_LIMIT) {
+                return { status: 'Online', class: 'status-online' };
+            } else if (onlineCount >= SERVER_USER_LIMIT) {
+                return { status: 'Full', class: 'status-full' };
+            } else {
+                return { status: 'Busy', class: 'status-busy' };
+            }
+        }
+
+        // Function to get user count class (color based on count)
+        function getUserCountClass(onlineCount) {
+            if (onlineCount === 0) return 'count-offline';
+            if (onlineCount <= 200) return 'user-count-low';  // Green for 1-200
+            if (onlineCount < SERVER_USER_LIMIT) return 'user-count-high';  // Red for 200+
+            return 'count-full';
+        }
+
+        // Function to get progress bar class based on percentage
+        function getProgressBarClass(percentage) {
+            if (percentage < 50) return 'progress-low';
+            if (percentage < 80) return 'progress-medium';
+            if (percentage < 100) return 'progress-high';
+            return 'progress-full';
+        }
+
+        // Function to try multiple CORS proxies with fallback
+        async function fetchWithCorsProxy(url, proxyIndex = 0) {
+            if (proxyIndex >= corsProxies.length) {
+                throw new Error('All CORS proxies failed');
+            }
+            
+            const proxyUrl = corsProxies[proxyIndex](url);
+            
+            try {
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 10000);
+                
+                const response = await fetch(proxyUrl, {
+                    signal: controller.signal,
+                    headers: {
+                        'Accept': 'text/plain'
+                    }
+                });
+                clearTimeout(timeoutId);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                return response;
+            } catch (error) {
+                console.warn(`CORS proxy ${proxyIndex} failed, trying next one:`, error);
+                return fetchWithCorsProxy(url, proxyIndex + 1);
+            }
+        }
+
+        // Function to update server status
+        async function updateServerStatus() {
+            const table = document.getElementById('serverTable');
+            const totalOnlineCountElement = document.getElementById('totalOnlineCount');
+            const lastUpdatedElement = document.getElementById('lastUpdated');
+            
+            // Clear existing rows except header
+            while (table.rows.length > 1) {
+                table.deleteRow(1);
+            }
+            
+            let totalOnlineCount = 0;
+            const updatePromises = statusServers.map(async (server) => {
+                // Create row for this server
+                const row = table.insertRow();
+                
+                // Add loading state
+                row.innerHTML = `
+                    <td><span class="status-indicator status-offline"></span>Checking...</td>
+                    <td class="server-name">${getFlagImage(getCountryCode(server.id))} <span>${server.name}</span></td>
+                    <td>Checking server status...</td>
+                    <td><span class="ping-time">-- ms</span></td>
+                `;
+                
+                try {
+                    const startTime = Date.now();
+                    
+                    // Use CORS proxy with fallback
+                    const response = await fetchWithCorsProxy(server.url);
+                    
+                    const responseText = await response.text();
+                    let onlineCount = parseInt(responseText, 10);
+                    
+                    // Apply server limit
+                    if (onlineCount > SERVER_USER_LIMIT) {
+                        onlineCount = SERVER_USER_LIMIT;
+                    }
+                    
+                    const pingTime = Date.now() - startTime;
+                    
+                    if (!isNaN(onlineCount)) {
+                        totalOnlineCount += onlineCount;
+                        
+                        const pingClass = getPingClass(pingTime);
+                        const statusInfo = getServerStatus(onlineCount);
+                        const countClass = getUserCountClass(onlineCount);
+                        
+                        // Calculate percentage for progress bar
+                        const percentage = Math.min(100, Math.round((onlineCount / SERVER_USER_LIMIT) * 100));
+                        const progressBarClass = getProgressBarClass(percentage);
+                        
+                        row.innerHTML = `
+                            <td><span class="status-indicator ${statusInfo.class}"></span>${statusInfo.status}</td>
+                            <td class="server-name">${getFlagImage(getCountryCode(server.id))} <span>${server.name}</span></td>
+                            <td>
+                                <div class="progress-info">
+                                    <span class="progress-text ${countClass}">Connected: ${onlineCount}/${SERVER_USER_LIMIT}</span>
+                                    <span class="progress-percentage">${percentage}%</span>
+                                </div>
+                                <div class="progress-container">
+                                    <div class="progress-bar">
+                                        <div class="progress-fill ${progressBarClass}" style="width: ${percentage}%"></div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td><span class="ping-time ${pingClass}">${pingTime} ms</span></td>
+                        `;
+                    } else {
+                        throw new Error('Invalid response from server');
+                    }
+                } catch (error) {
+                    console.error(`Error fetching data for ${server.name}:`, error);
+                    row.innerHTML = `
+                        <td><span class="status-indicator status-offline"></span>Offline</td>
+                        <td class="server-name">${getFlagImage(getCountryCode(server.id))} <span>${server.name}</span></td>
+                        <td class="error-message">Unable to connect to server <button class="retry-btn" onclick="retryServer('${server.id}')">Retry</button></td>
+                        <td><span class="ping-time ping-bad">Error</span></td>
+                    `;
+                }
+            });
+            
+            // Wait for all server checks to complete
+            await Promise.allSettled(updatePromises);
+            
+            // Update total count and timestamp
+            totalOnlineCountElement.textContent = totalOnlineCount;
+            
+            // Set Bangkok timezone
+            const now = new Date();
+            const options = { 
+                timeZone: 'Asia/Bangkok', 
+                year: 'numeric', 
+                month: '2-digit', 
+                day: '2-digit', 
+                hour: '2-digit', 
+                minute: '2-digit', 
+                second: '2-digit' 
+            };
+            const formatter = new Intl.DateTimeFormat('en-US', options);
+            const parts = formatter.formatToParts(now);
+            
+            const formattedDate = `${parts.find(p => p.type === 'year').value}-${parts.find(p => p.type === 'month').value}-${parts.find(p => p.type === 'day').value} ${parts.find(p => p.type === 'hour').value}:${parts.find(p => p.type === 'minute').value}:${parts.find(p => p.type === 'second').value}`;
+            
+            lastUpdatedElement.textContent = `Last updated: ${formattedDate}`;
+        }
+
+        // Function to update only ping times
+        async function updatePingTimes() {
+            const rows = document.getElementById('serverTable').rows;
+            
+            for (let i = 1; i < rows.length; i++) {
+                const row = rows[i];
+                const serverNameCell = row.cells[1];
+                const serverName = serverNameCell.querySelector('span').textContent;
+                
+                const server = statusServers.find(s => s.name === serverName);
+                if (!server) continue;
+                
+                const pingCell = row.cells[3];
+                
+                try {
+                    const startTime = Date.now();
+                    const response = await fetchWithCorsProxy(server.url);
+                    await response.text(); // We don't need the content for ping
+                    const pingTime = Date.now() - startTime;
+                    
+                    const pingClass = getPingClass(pingTime);
+                    pingCell.innerHTML = `<span class="ping-time ${pingClass}">${pingTime} ms</span>`;
+                } catch (error) {
+                    pingCell.innerHTML = '<span class="ping-time ping-bad">Error</span>';
+                }
+            }
+        }
+
+        // Function to retry a specific server
+        async function retryServer(serverId) {
+            const server = statusServers.find(s => s.id === serverId);
+            if (!server) return;
+            
+            const rows = document.getElementById('serverTable').rows;
+            for (let i = 1; i < rows.length; i++) {
+                const row = rows[i];
+                const serverNameCell = row.cells[1];
+                if (serverNameCell.textContent.includes(server.name)) {
+                    row.innerHTML = `
+                        <td><span class="status-indicator status-offline"></span>Retrying...</td>
+                        <td class="server-name">${getFlagImage(getCountryCode(server.id))} <span>${server.name}</span></td>
+                        <td>Checking server status...</td>
+                        <td><span class="ping-time">-- ms</span></td>
+                    `;
+                    
+                    try {
+                        const startTime = Date.now();
+                        
+                        // Use CORS proxy with fallback
+                        const response = await fetchWithCorsProxy(server.url);
+                        
+                        const responseText = await response.text();
+                        let onlineCount = parseInt(responseText, 10);
+                        
+                        // Apply server limit
+                        if (onlineCount > SERVER_USER_LIMIT) {
+                            onlineCount = SERVER_USER_LIMIT;
+                        }
+                        
+                        const pingTime = Date.now() - startTime;
+                        
+                        if (!isNaN(onlineCount)) {
+                            // Update total count
+                            const totalOnlineCountElement = document.getElementById('totalOnlineCount');
+                            const currentTotal = parseInt(totalOnlineCountElement.textContent, 10) || 0;
+                            totalOnlineCountElement.textContent = currentTotal + onlineCount;
+                            
+                            const pingClass = getPingClass(pingTime);
+                            const statusInfo = getServerStatus(onlineCount);
+                            const countClass = getUserCountClass(onlineCount);
+                            
+                            // Calculate percentage for progress bar
+                            const percentage = Math.min(100, Math.round((onlineCount / SERVER_USER_LIMIT) * 100));
+                            const progressBarClass = getProgressBarClass(percentage);
+                            
+                            row.innerHTML = `
+                                <td><span class="status-indicator ${statusInfo.class}"></span>${statusInfo.status}</td>
+                                <td class="server-name">${getFlagImage(getCountryCode(server.id))} <span>${server.name}</span></td>
+                                <td>
+                                    <div class="progress-info">
+                                        <span class="progress-text ${countClass}">Connected: ${onlineCount}/${SERVER_USER_LIMIT}</span>
+                                        <span class="progress-percentage">${percentage}%</span>
+                                    </div>
+                                    <div class="progress-container">
+                                        <div class="progress-bar">
+                                            <div class="progress-fill ${progressBarClass}" style="width: ${percentage}%"></div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td><span class="ping-time ${pingClass}">${pingTime} ms</span></td>
+                            `;
+                        } else {
+                            throw new Error('Invalid response from server');
+                        }
+                    } catch (error) {
+                        console.error(`Error fetching data for ${server.name}:`, error);
+                        row.innerHTML = `
+                            <td><span class="status-indicator status-offline"></span>Offline</td>
+                            <td class="server-name">${getFlagImage(getCountryCode(server.id))} <span>${server.name}</span></td>
+                            <td class="error-message">Unable to connect to server <button class="retry-btn" onclick="retryServer('${server.id}')">Retry</button></td>
+                            <td><span class="ping-time ping-bad">Error</span></td>
+                        `;
+                    }
+                    break;
+                }
+            }
+        }
+
+        // Fetch online users on page load and every 60 seconds
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchOnlineUsers();
+            setInterval(fetchOnlineUsers, 60000);
+            
+            // Initialize server status monitor
+            updateServerStatus();
+            
+            // Update ping times every 5 seconds
+            setInterval(updatePingTimes, 5000);
+            
+            // Update server status every 30 seconds
+            setInterval(updateServerStatus, 30000);
+        });
+    </script>
+</body>
+</html>
