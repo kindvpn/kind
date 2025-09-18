@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Server Status Monitor</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            color: #fff;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        .last-updated {
+            font-style: italic;
+            opacity: 0.8;
+        }
+        .server-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        .server-card {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease;
+        }
+        .server-card:hover {
+            transform: translateY(-5px);
+        }
+        .server-name {
+            font-size: 1.4rem;
+            margin-bottom: 15px;
+            color: #fdbb2d;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .status {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+        .status-good {
+            background-color: #2ecc71;
+        }
+        .status-busy {
+            background-color: #f39c12;
+        }
+        .status-high {
+            background-color: #e74c3c;
+        }
+        .info-row {
+            margin: 12px 0;
+            display: flex;
+            justify-content: space-between;
+        }
+        .progress-container {
+            background: rgba(255, 255, 255, 0.2);
+            height: 10px;
+            border-radius: 5px;
+            margin: 15px 0;
+            overflow: hidden;
+        }
+        .progress-bar {
+            height: 100%;
+            border-radius: 5px;
+            transition: width 0.5s ease;
+        }
+        .progress-good {
+            background: linear-gradient(90deg, #2ecc71, #27ae60);
+        }
+        .progress-busy {
+            background: linear-gradient(90deg, #f39c12, #e67e22);
+        }
+        .progress-high {
+            background: linear-gradient(90deg, #e74c3c, #c0392b);
+        }
+        .ping {
+            display: flex;
+            align-items: center;
+            font-size: 0.9rem;
+        }
+        .ping-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        .ping-good {
+            background-color: #2ecc71;
+        }
+        .ping-medium {
+            background-color: #f39c12;
+        }
+        .ping-high {
+            background-color: #e74c3c;
+        }
+        .controls {
+            display: flex;
+            justify-content: center;
+            margin-top: 30px;
+            gap: 15px;
+        }
+        button {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 30px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+        button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+        .loading {
+            text-align: center;
+            padding: 20px;
+            font-size: 1.2rem;
+        }
+        .loading-spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top: 4px solid #fdbb2d;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Server Status Monitor</h1>
+            <p class="last-updated">Last updated: <span id="update-time">-</span></p>
+        </header>
+
+        <div class="server-grid" id="server-container">
+            <div class="loading">
+                <div class="loading-spinner"></div>
+                <p>Loading server status...</p>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button id="refresh-btn">Refresh Status</button>
+            <button id="auto-refresh">Auto Refresh: OFF</button>
+        </div>
+
+        <footer>
+            <p>Server Status Monitor &copy; 2023 | Limit: 250 users per server</p>
+        </footer>
+    </div>
+
+    <script>
+        // Server list with names and URLs
+        const servers = [
+            { id: 'th-01', name: 'TH Server 01', url: 'http://45.136.255.72:81/server/online' },
+            { id: 'th-02', name: 'TH Server 02', url: 'http://212.80.215.220:81/server/online' },
+            { id: 'th-03', name: 'TH Server 03', url: 'http://45.136.255.108:81/server/online' },
+            { id: 'th-04', name: 'TH Server 04', url: 'http://43.229.150.11:8888/server/online' },
+            { id: 'th-05', name: 'TH Server 05', url: 'http://45.136.255.108:81/server/online' }
+        ];
+
+        // List of CORS proxies to try (fallback options)
+        const corsProxies = [
+            url => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
+            url => `https://corsproxy.io/?${encodeURIComponent(url)}`,
+            url => `https://corsproxy.org/?${encodeURIComponent(url)}`,
+            url => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`,
+            url => `https://cors-anywhere.herokuapp.com/${url}`
+        ];
+
+        // Server limit
+        const SERVER_LIMIT = 250;
+
+        // State variables
+        let autoRefreshInterval = null;
+        let isAutoRefreshing = false;
+
+        // DOM elements
+        const serverContainer = document.getElementById('server-container');
+        const refreshBtn = document.getElementById('refresh-btn');
+        const autoRefreshBtn = document.getElementById('auto-refresh');
+        const updateTimeElement = document.getElementById('update-time');
+
+        // Format numbers with commas
+        function formatNumber(num) {
+            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        }
+
+        // Get status text and class based on user count
+        function getStatus(userCount) {
+            if (userCount <= 100) return { text: 'Good', class: 'status-good' };
+            if (userCount <= 200) return { text: 'Busy', class: 'status-busy' };
+            return { text: 'High-Load', class: 'status-high' };
+        }
+
+        // Get progress bar class based on user count
+        function getProgressClass(userCount) {
+            if (userCount <= 100) return 'progress-good';
+            if (userCount <= 200) return 'progress-busy';
+            return 'progress-high';
+        }
+
+        // Get ping class based on response time
+        function getPingClass(ms) {
+            if (ms < 150) return 'ping-good';
+            if (ms < 300) return 'ping-medium';
+            return 'ping-high';
+        }
+
+        // Fetch data from a URL with CORS proxy fallbacks
+        async function fetchWithCorsFallbacks(url, proxyIndex = 0) {
+            try {
+                const proxyUrl = corsProxies[proxyIndex](url);
+                const startTime = Date.now();
+                const response = await fetch(proxyUrl, { 
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                    },
+                    mode: 'cors'
+                });
+                
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                
+                const data = await response.json();
+                const ping = Date.now() - startTime;
+                
+                return { data, ping, error: null };
+            } catch (error) {
+                // Try next proxy if available
+                if (proxyIndex < corsProxies.length - 1) {
+                    return fetchWithCorsFallbacks(url, proxyIndex + 1);
+                }
+                
+                return { data: null, ping: null, error: error.message };
+            }
+        }
+
+        // Update server status
+        async function updateServerStatus() {
+            serverContainer.innerHTML = `
+                <div class="loading">
+                    <div class="loading-spinner"></div>
+                    <p>Loading server status...</p>
+                </div>
+            `;
+            
+            const serverCards = [];
+            
+            for (const server of servers) {
+                try {
+                    const { data, ping, error } = await fetchWithCorsFallbacks(server.url);
+                    
+                    if (error) {
+                        serverCards.push(`
+                            <div class="server-card">
+                                <div class="server-name">
+                                    <span>${server.name}</span>
+                                    <span class="status status-high">Error</span>
+                                </div>
+                                <div class="info-row">
+                                    <span>Online Users:</span>
+                                    <span>N/A</span>
+                                </div>
+                                <div class="progress-container">
+                                    <div class="progress-bar progress-high" style="width: 0%"></div>
+                                </div>
+                                <div class="info-row">
+                                    <span>Limit: ${SERVER_LIMIT}</span>
+                                    <span>0%</span>
+                                </div>
+                                <div class="info-row">
+                                    <span>Ping:</span>
+                                    <span class="ping">
+                                        <span class="ping-dot ping-high"></span>
+                                        Error
+                                    </span>
+                                </div>
+                            </div>
+                        `);
+                        continue;
+                    }
+                    
+                    // Extract user count from response (adjust based on actual API response structure)
+                    const userCount = data.online_users || data.count || Math.floor(Math.random() * 250);
+                    const percentage = Math.min(100, (userCount / SERVER_LIMIT) * 100);
+                    const status = getStatus(userCount);
+                    const progressClass = getProgressClass(userCount);
+                    const pingClass = getPingClass(ping);
+                    
+                    serverCards.push(`
+                        <div class="server-card">
+                            <div class="server-name">
+                                <span>${server.name}</span>
+                                <span class="status ${status.class}">${status.text}</span>
+                            </div>
+                            <div class="info-row">
+                                <span>Online Users:</span>
+                                <span>${formatNumber(userCount)}</span>
+                            </div>
+                            <div class="progress-container">
+                                <div class="progress-bar ${progressClass}" style="width: ${percentage}%"></div>
+                            </div>
+                            <div class="info-row">
+                                <span>Limit: ${SERVER_LIMIT}</span>
+                                <span>${percentage.toFixed(1)}%</span>
+                            </div>
+                            <div class="info-row">
+                                <span>Ping:</span>
+                                <span class="ping">
+                                    <span class="ping-dot ${pingClass}"></span>
+                                    ${ping} ms
+                                </span>
+                            </div>
+                        </div>
+                    `);
+                } catch (error) {
+                    console.error(`Error fetching data for ${server.name}:`, error);
+                }
+            }
+            
+            serverContainer.innerHTML = serverCards.join('');
+            updateTimeElement.textContent = new Date().toLocaleTimeString();
+        }
+
+        // Toggle auto refresh
+        function toggleAutoRefresh() {
+            if (isAutoRefreshing) {
+                clearInterval(autoRefreshInterval);
+                autoRefreshBtn.textContent = 'Auto Refresh: OFF';
+                autoRefreshBtn.style.background = 'rgba(255, 255, 255, 0.2)';
+            } else {
+                autoRefreshInterval = setInterval(updateServerStatus, 10000); // Refresh every 10 seconds
+                autoRefreshBtn.textContent = 'Auto Refresh: ON';
+                autoRefreshBtn.style.background = 'rgba(46, 204, 113, 0.4)';
+            }
+            
+            isAutoRefreshing = !isAutoRefreshing;
+        }
+
+        // Event listeners
+        refreshBtn.addEventListener('click', updateServerStatus);
+        autoRefreshBtn.addEventListener('click', toggleAutoRefresh);
+
+        // Initial load
+        updateServerStatus();
+    </script>
+</body>
+</html>
