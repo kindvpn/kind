@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SVPN Online Users</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        body {
+            font-family: 'Roboto', Arial, sans-serif;
+            background: linear-gradient(135deg, #e0e7ff 0%, #ffffff 100%);
+            min-height: 100vh;
+            padding: 5px;
+            font-size: 0.9rem;
+        }
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            font-size: 1.1rem;
+        }
+        .table-container {
+            width: 98%;
+            max-width: 900px;
+            margin: 20px auto 0 auto;
+            background: #fff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            border-radius: 6px;
+            padding: 12px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #fff;
+            font-size: 0.85rem;
+        }
+        th, td {
+            border: 1px solid #ececec;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+            font-weight: 600;
+        }
+        .online {
+            color: #00C853; font-weight: bold;
+        }
+        .online-warning {
+            color: #FFD600; font-weight: bold;
+        }
+        .online-danger {
+            color: #D32F2F; font-weight: bold;
+        }
+        .offline {
+            color: #d32f2f; font-weight: bold;
+        }
+        .total-users {
+            text-align: center;
+            margin-top: 12px;
+            margin-bottom: 15px;
+            font-weight: bold;
+            font-size: 0.95rem;
+        }
+        .status-dot {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 5px;
+            vertical-align: middle;
+        }
+        .dot-green { background: #00C853; }
+        .dot-yellow { background: #FFD600; }
+        .dot-red { background: #D32F2F; }
+        .refresh-btn {
+            display: block;
+            margin: 15px auto;
+            padding: 6px 12px;
+            background: #4a6cf7;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+        .refresh-btn:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+        }
+        .auto-refresh-indicator {
+            text-align: center;
+            font-size: 0.8rem;
+            color: #666;
+            margin-top: 8px;
+        }
+        .last-updated {
+            text-align: center;
+            font-size: 0.8rem;
+            color: #888;
+            margin-top: 5px;
+        }
+        .loading-spinner {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border: 2px solid rgba(0,0,0,0.1);
+            border-radius: 50%;
+            border-top-color: #4a6cf7;
+            animation: spin 1s linear infinite;
+            margin-right: 6px;
+            vertical-align: middle;
+        }
+        .progress-container {
+            width: 100%;
+            margin-top: 4px;
+        }
+        .progress {
+            height: 6px;
+            width: 100%;
+            background-color: #f0f0f0;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        .progress-bar {
+            height: 100%;
+            border-radius: 3px;
+            transition: width 0.3s ease;
+        }
+        .progress-text {
+            font-size: 0.75rem;
+            margin-top: 2px;
+            text-align: center;
+            color: #666;
+        }
+        .country-badge {
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: 3px;
+            background-color: #f0f0f0;
+            font-size: 0.75rem;
+            font-weight: bold;
+            margin-right: 5px;
+        }
+        .ping-value {
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        .ping-good { color: #00C853; }
+        .ping-medium { color: #FFD600; }
+        .ping-bad { color: #D32F2F; }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        @media (max-width: 768px) {
+            .table-container {padding: 5px;}
+            th, td {font-size: 0.8rem; padding: 6px 4px;}
+            .progress-text {font-size: 0.7rem;}
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <img src="https://raw.githubusercontent.com/sansoe2022/image_store/refs/heads/main/pnt_icon510.png" alt="SVPN Logo" style="width:30px; height:auto;">
+                PNT VPN
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#svpnNavbar" aria-controls="svpnNavbar" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="svpnNavbar">
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" href="https://pntvpn.netlify.app/guidesim">
+                            <i class="bi bi-journal-code me-1"></i> VPN နဲ့ ချိတ်သုံးဖို့ လမ်းညွှန်
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="https://pntvpn.netlify.app/extendsim">
+                            <i class="bi bi-phone me-1"></i> ဆင်းမ်ကဒ် သက်တမ်းတိုးနည်း
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="https://pntvpn.netlify.app/">
+                            <i class="bi bi-house-door me-1"></i> Home
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    
+    <h4 class="mt-3 text-center">PNT VPN Server Status</h4>
+    
+    <div class="table-container">
+        <table id="server-table">
+            <tr>
+                <th>Server</th>
+                <th>Status</th>
+                <th>Ping</th>
+                <th>Load</th>
+            </tr>
+            <!-- Server rows will be populated by JavaScript -->
+        </table>
+        <div class="total-users">Total online users: <span id="total-online"><span class="status-dot dot-green"></span>0</span></div>
+        <div class="auto-refresh-indicator">
+            <i class="bi bi-arrow-repeat"></i> Auto-refreshing every 30 seconds
+        </div>
+        <div class="last-updated" id="last-updated">
+            Last updated: <span id="update-time">Just now</span>
+        </div>
+    </div>
+    
+    <button class="refresh-btn" id="refresh-btn" onclick="loadServerStatus()">
+        <i class="bi bi-arrow-clockwise"></i> Refresh Now
+    </button>
+    
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Server data
+        const servers = [
+            { name: 'New 1', country: 'TH', url: 'http://new1.sksfree.shop:81/server/online' },
+            { name: 'New 2', country: 'TH', url: 'http://new2.sksfree.shop:81/server/online' },
+            { name: 'New 3', country: 'TH', url: 'http://new3.sksfree.shop:81/server/online' },
+            { name: 'New 4', country: 'TH', url: 'http://new4.sksfree.shop:81/server/online' },
+            { name: 'New 5', country: 'TH', url: 'http://new5.sksfree.shop:81/server/online' },
+            { name: 'New 6', country: 'TH', url: 'http://new6.sksfree.shop:81/server/online' },
+            { name: 'New 7', country: 'TH', url: 'http://new7.sksfree.shop:81/server/online' },
+            { name: 'New 8', country: 'TH', url: 'http://new8.sksfree.shop:8888/server/online' },
+            { name: 'New 9', country: 'TH', url: 'http://new9.sksfree.shop:81/server/online' },
+            { name: 'New 10', country: 'TH', url: 'http://new10.sksfree.shop:8888/server/online' },
+            { name: 'New 11', country: 'TH', url: 'http://new11.sksfree.shop:81/server/online' },
+            { name: 'New 12', country: 'TH', url: 'http://new12.sksfree.shop:81/server/online' },
+            { name: 'New 13', country: 'TH', url: 'http://new13.sksfree.shop:81/server/online' },
+            { name: 'New 14', country: 'TH', url: 'http://new14.sksfree.shop:81/server/online' },
+            { name: 'New 15', country: 'TH', url: 'http://new15.sksfree.shop:81/server/online' },
+            { name: 'New 16', country: 'TH', url: 'http://new16.sksfree.shop:81/server/online' },
+            { name: 'New 17', country: 'TH', url: 'http://new17.sksfree.shop:81/server/online' },
+            { name: 'New 18', country: 'TH', url: 'http://new18.sksfree.shop:81/server/online' }
+        ];
+
+        // Server capacity (each server can handle up to 250 users)
+        const SERVER_CAPACITY = 250;
+
+        // List of CORS proxies to try (fallback options)
+        const corsProxies = [
+            url => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
+            url => `https://corsproxy.io/?${encodeURIComponent(url)}`,
+            url => `https://corsproxy.org/?${encodeURIComponent(url)}`,
+            url => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`,
+            url => `https://cors-anywhere.herokuapp.com/${url}`
+        ];
+
+        // Function to update the time display
+        function updateTimeDisplay() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString();
+            document.getElementById('update-time').textContent = timeString;
+        }
+
+        // Function to measure ping by timing the fetch request
+        async function measurePing(url) {
+            const startTime = performance.now();
+            try {
+                const controller = new AbortController();
+                const id = setTimeout(() => controller.abort(), 5000);
+                
+                const response = await fetch(url, {
+                    signal: controller.signal,
+                    mode: 'no-cors'
+                });
+                clearTimeout(id);
+                
+                if (response.ok) {
+                    const endTime = performance.now();
+                    return Math.round(endTime - startTime);
+                }
+            } catch (error) {
+                // If direct connection fails, try with proxies for ping measurement
+                for (const proxy of corsProxies) {
+                    try {
+                        const proxyUrl = proxy(url);
+                        const proxyStartTime = performance.now();
+                        
+                        const controller = new AbortController();
+                        const id = setTimeout(() => controller.abort(), 5000);
+                        
+                        const response = await fetch(proxyUrl, {
+                            signal: controller.signal
+                        });
+                        clearTimeout(id);
+                        
+                        if (response.ok) {
+                            const proxyEndTime = performance.now();
+                            return Math.round(proxyEndTime - proxyStartTime);
+                        }
+                    } catch (e) {
+                        // Continue to next proxy
+                    }
+                }
+            }
+            return null; // Ping measurement failed
+        }
+
+        // Function to fetch data from a server with timeout and proxy fallback
+        async function fetchWithProxies(url, timeout = 8000) {
+            let lastError = null;
+            
+            // Try direct connection first
+            try {
+                const controller = new AbortController();
+                const id = setTimeout(() => controller.abort(), timeout);
+                
+                const response = await fetch(url, {
+                    signal: controller.signal,
+                    mode: 'no-cors'
+                });
+                clearTimeout(id);
+                
+                if (response.ok) {
+                    const text = await response.text();
+                    const onlineCount = parseInt(text.trim());
+                    
+                    if (!isNaN(onlineCount)) {
+                        return onlineCount;
+                    }
+                }
+            } catch (error) {
+                lastError = error;
+            }
+            
+            // If direct connection fails, try each proxy
+            for (const proxy of corsProxies) {
+                try {
+                    const proxyUrl = proxy(url);
+                    const controller = new AbortController();
+                    const id = setTimeout(() => controller.abort(), timeout);
+                    
+                    const response = await fetch(proxyUrl, {
+                        signal: controller.signal
+                    });
+                    clearTimeout(id);
+                    
+                    if (response.ok) {
+                        const text = await response.text();
+                        const onlineCount = parseInt(text.trim());
+                        
+                        if (!isNaN(onlineCount)) {
+                            return onlineCount;
+                        }
+                    }
+                } catch (error) {
+                    lastError = error;
+                    // Continue to next proxy
+                }
+            }
+            
+            throw lastError || new Error('All proxy attempts failed');
+        }
+
+        // Function to create a compact progress bar
+        function createProgressBar(percentage, onlineCount) {
+            let barColor = '#00C853'; // Green
+            if (percentage > 60) barColor = '#FFD600'; // Yellow
+            if (percentage > 80) barColor = '#D32F2F'; // Red
+            
+            return `
+                <div class="progress-container">
+                    <div class="progress">
+                        <div class="progress-bar" style="width: ${percentage}%; background-color: ${barColor};"></div>
+                    </div>
+                    <div class="progress-text">${onlineCount}/${SERVER_CAPACITY}</div>
+                </div>
+            `;
+        }
+
+        // Function to determine ping class
+        function getPingClass(ping) {
+            if (ping === null) return "";
+            if (ping < 150) return "ping-good";
+            if (ping < 300) return "ping-medium";
+            return "ping-bad";
+        }
+
+        // Function to load server status
+        async function loadServerStatus() {
+            const refreshBtn = document.getElementById('refresh-btn');
+            refreshBtn.disabled = true;
+            refreshBtn.innerHTML = '<span class="loading-spinner"></span> Refreshing...';
+            
+            const table = document.getElementById('server-table');
+            // Clear existing rows except header
+            while (table.rows.length > 1) {
+                table.deleteRow(1);
+            }
+            
+            let totalOnlineCount = 0;
+            const totalOnlineElement = document.getElementById('total-online');
+            
+            // Create rows for each server
+            for (const server of servers) {
+                const row = table.insertRow();
+                const cell1 = row.insertCell(0);
+                const cell2 = row.insertCell(1);
+                const cell3 = row.insertCell(2);
+                const cell4 = row.insertCell(3);
+                
+                cell1.innerHTML = `<span class="country-badge">${server.country}</span>${server.name}`;
+                cell2.innerHTML = '<span class="loading-spinner"></span> Checking...';
+                cell3.innerHTML = '<span class="loading-spinner"></span>';
+                cell4.innerHTML = '<span class="loading-spinner"></span>';
+                
+                try {
+                    // Measure ping first
+                    const ping = await measurePing(server.url);
+                    
+                    // Then fetch online count
+                    const onlineCount = await fetchWithProxies(server.url);
+                    totalOnlineCount += onlineCount;
+                    
+                    // Calculate server load percentage
+                    const loadPercentage = Math.min(100, (onlineCount / SERVER_CAPACITY) * 100);
+                    
+                    let statusClass, dotClass, label;
+                    if (onlineCount > 200) {
+                        statusClass = "online-danger";
+                        dotClass = "dot-red";
+                        label = "High";
+                    } else if (onlineCount > 150) {
+                        statusClass = "online-warning";
+                        dotClass = "dot-yellow";
+                        label = "Busy";
+                    } else {
+                        statusClass = "online";
+                        dotClass = "dot-green";
+                        label = "Normal";
+                    }
+                    
+                    cell2.innerHTML = `
+                        <span class="status-dot ${dotClass}"></span>
+                        ${onlineCount} users
+                        <span class="badge rounded-pill ms-1 ${statusClass}" style="background: transparent; border: 1px solid #ececec; font-size: 0.75em;">${label}</span>
+                    `;
+                    cell2.className = statusClass;
+                    
+                    // Display ping value
+                    cell3.innerHTML = ping !== null ? 
+                        `<span class="ping-value ${getPingClass(ping)}">${ping} ms</span>` : 
+                        '<span class="offline">N/A</span>';
+                    
+                    // Add progress bar to the fourth column
+                    cell4.innerHTML = createProgressBar(loadPercentage, onlineCount);
+                } catch (error) {
+                    console.error(`Error fetching data from ${server.name}:`, error);
+                    cell2.innerHTML = '<span class="status-dot dot-red"></span>Offline';
+                    cell2.className = 'offline';
+                    cell3.innerHTML = '<span class="offline">N/A</span>';
+                    cell4.innerHTML = 'N/A';
+                }
+            }
+            
+            // Update total users with appropriate styling
+            let totalClass, totalDotClass;
+            if (totalOnlineCount > 400 * servers.length) {
+                totalClass = "online-danger";
+                totalDotClass = "dot-red";
+            } else if (totalOnlineCount > 300 * servers.length) {
+                totalClass = "online-warning";
+                totalDotClass = "dot-yellow";
+            } else {
+                totalClass = "online";
+                totalDotClass = "dot-green";
+            }
+            
+            totalOnlineElement.innerHTML = `<span class="status-dot ${totalDotClass}"></span>${totalOnlineCount}`;
+            totalOnlineElement.className = totalClass;
+            
+            // Update the time display
+            updateTimeDisplay();
+            
+            // Re-enable refresh button
+            refreshBtn.disabled = false;
+            refreshBtn.innerHTML = '<i class="bi bi-arrow-clockwise"></i> Refresh Now';
+        }
+        
+        // Load server status when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            loadServerStatus();
+            
+            // Set up auto-refresh every 30 seconds
+            setInterval(loadServerStatus, 30000);
+        });
+    </script>
+</body>
+</html>
